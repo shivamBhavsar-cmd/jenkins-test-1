@@ -19,7 +19,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'gradle build'
+                sh '${GRADLE_HOME}/bin/gradle build'
             }
         }
 
