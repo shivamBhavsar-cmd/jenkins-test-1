@@ -38,7 +38,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    sh "${GRADLE_HOME}/bin/gradle sonarqube"
+                    sh '${GRADLE_HOME}/bin/gradle sonarqube'
                 }
             }
         }
@@ -54,7 +54,6 @@ pipeline {
         stage('Debug') {
             steps {
                 sh 'echo GRADLE_HOME is $GRADLE_HOME'
-                sh 'ls -l $GRADLE_HOME/bin'
                 sh '$GRADLE_HOME/bin/gradle --version'
             }
         }
