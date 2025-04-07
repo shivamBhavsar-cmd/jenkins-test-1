@@ -2,18 +2,18 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk-17'
-        gradle 'gradle-8.13'
+        gradle 'Gradle-8.13'  
+        jdk 'Java-17'         
     }
 
     environment {
-        SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
+        SONARQUBE_SERVER = 'SonarQube' 
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/shivamBhavsar-cmd/jenkins-test-1.git'
+                checkout scm
             }
         }
 
@@ -25,20 +25,20 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'gradle test'
+                sh '${GRADLE_HOME}/bin/gradle test'
             }
         }
 
         stage('Code Quality - Checkstyle') {
             steps {
-                sh 'gradle check'
+                sh '${GRADLE_HOME}/bin/gradle check'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh "${SONAR_SCANNER_HOME}/sonar-scanner"
+                withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                    sh "${GRADLE_HOME}/bin/gradle sonarqube"
                 }
             }
         }
