@@ -2,43 +2,53 @@ pipeline {
     agent any
 
     tools {
-        gradle 'gradle-8.13'
+        jdk 'jdk-17'
+        gradle 'gradle-4.4.1'
     }
 
     environment {
-        SONARQUBE_SCANNER_HOME = tool 'SonarQubeScanner'
+        SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
     }
 
     stages {
-        stage('Fetch Code') {
+        stage('Checkout') {
             steps {
-                echo 'Fetching code from GitHub...'
-                checkout scm
+                git 'https://github.com/shivamBhavsar-cmd/jenkins-test-1.git'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building the project...'
-                sh './gradlew build'
+                sh 'gradle build'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running tests...'
-                sh './gradlew test'
+                sh 'gradle test'
+            }
+        }
+
+        stage('Code Quality - Checkstyle') {
+            steps {
+                sh 'gradle check'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('MySonar') {
-                    sh './gradlew sonarqube'
+                withSonarQubeEnv('SonarQube') {
+                    sh "${SONAR_SCANNER_HOME}/sonar-scanner"
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
     }
 }
-
