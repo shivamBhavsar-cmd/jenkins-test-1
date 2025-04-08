@@ -39,16 +39,16 @@ pipeline {
             }
         }
 
-        // stage('Code Quality - Checkstyle') {
-        //     steps {
-        //         script {
-        //             def gradleHome = tool 'Gradle-8.13'
-        //             withEnv(["PATH+GRADLE=${gradleHome}/bin"]) {
-        //                 sh 'gradle check'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Code Quality - Checkstyle') {
+            steps {
+                script {
+                    def gradleHome = tool 'Gradle-8.13'
+                    withEnv(["PATH+GRADLE=${gradleHome}/bin"]) {
+                        sh 'gradle check'
+                    }
+                }
+            }
+        }
 
         stage('SonarQube Analysis') {
             steps {
