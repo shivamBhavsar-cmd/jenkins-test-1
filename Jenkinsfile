@@ -19,26 +19,46 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh '${GRADLE_HOME}/bin/gradle build'
+                script {
+                    def gradleHome = tool 'Gradle-8.13'
+                    withEnv(["PATH+GRADLE=${gradleHome}/bin"]) {
+                        sh 'gradle build'
+                    }
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh '${GRADLE_HOME}/bin/gradle test'
+                script {
+                    def gradleHome = tool 'Gradle-8.13'
+                    withEnv(["PATH+GRADLE=${gradleHome}/bin"]) {
+                        sh 'gradle test'
+                    }
+                }
             }
         }
 
         stage('Code Quality - Checkstyle') {
             steps {
-                sh '${GRADLE_HOME}/bin/gradle check'
+                script {
+                    def gradleHome = tool 'Gradle-8.13'
+                    withEnv(["PATH+GRADLE=${gradleHome}/bin"]) {
+                        sh 'gradle check'
+                    }
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    sh '${GRADLE_HOME}/bin/gradle sonarqube'
+                script {
+                    def gradleHome = tool 'Gradle-8.13'
+                    withEnv(["PATH+GRADLE=${gradleHome}/bin"]) {
+                        withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                            sh 'gradle sonarqube'
+                        }
+                    }
                 }
             }
         }
@@ -53,8 +73,13 @@ pipeline {
 
         stage('Debug') {
             steps {
-                sh 'echo GRADLE_HOME is $GRADLE_HOME'
-                sh '$GRADLE_HOME/bin/gradle --version'
+                script {
+                    def gradleHome = tool 'Gradle-8.13'
+                    withEnv(["PATH+GRADLE=${gradleHome}/bin"]) {
+                        sh 'echo GRADLE_HOME is $PATH'
+                        sh 'gradle --version'
+                    }
+                }
             }
         }
     }
